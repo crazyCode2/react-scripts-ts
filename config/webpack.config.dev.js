@@ -20,7 +20,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
+const tsImportPluginFactory = require('ts-import-plugin');
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
 const publicPath = '/';
@@ -116,6 +116,9 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      '@utils': path.resolve('src/utils'),
+      '@apps': path.resolve('src/apps'),
+      '@components': path.resolve('src/components')
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -179,6 +182,16 @@ module.exports = {
                 options: {
                   // disable type checker - we will use it in fork plugin
                   transpileOnly: true,
+                  getCustomTransformers: () => ({
+                    before: [
+                      tsImportPluginFactory({
+                        libraryName: 'antd',
+                        libraryDictory: 'es',
+                        style: 'css'
+                      })
+                    ]
+                  }),
+                  compilerOptions: { module: 'es2015' }
                 },
               },
             ],
@@ -189,7 +202,7 @@ module.exports = {
           // In production, we use a plugin to extract that CSS to a file, but
           // in development "style" loader enables hot editing of CSS.
           {
-            test: /\.css$/,
+            test: /\.css|less$/,
             use: [
               require.resolve('style-loader'),
               {
@@ -218,8 +231,12 @@ module.exports = {
                   ],
                 },
               },
+              {
+                loader: 'less-loader'
+              }
             ],
           },
+          
           // "file" loader makes sure those assets get served by WebpackDevServer.
           // When you `import` an asset, you get its (virtual) filename.
           // In production, they would get copied to the `build` folder.

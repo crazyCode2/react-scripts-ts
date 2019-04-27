@@ -66,7 +66,11 @@ module.exports = {
   // You can exclude the *.map files from the build during deployment.
   devtool: shouldUseSourceMap ? 'source-map' : false,
   // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve('./polyfills'), paths.appIndexJs],
+  entry: {
+    polyfills: require.resolve('./polyfills'),
+    main: paths.appIndexJs,
+    vendor: ['react', 'react-dom', 'antd']
+  },
   output: {
     // The build folder.
     path: paths.appBuild,
@@ -79,9 +83,7 @@ module.exports = {
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info =>
-      path
-        .relative(paths.appSrc, info.absoluteResourcePath)
-        .replace(/\\/g, '/'),
+      path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -123,6 +125,9 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      '@utils': path.resolve('src/utils'),
+      '@apps': path.resolve('src/apps'),
+      '@components': path.resolve('src/components')
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -201,7 +206,7 @@ module.exports = {
           // use the "style" loader inside the async code so CSS from them won't be
           // in the main CSS file.
           {
-            test: /\.css$/,
+            test: /\.css|less$/,
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {
@@ -240,6 +245,9 @@ module.exports = {
                         ],
                       },
                     },
+                    {
+                      loader: 'less-loader'
+                    }
                   ],
                 },
                 extractTextPluginOptions
@@ -345,6 +353,9 @@ module.exports = {
     // having to parse `index.html`.
     new ManifestPlugin({
       fileName: 'asset-manifest.json',
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
     }),
     // Generate a service worker script that will precache, and keep up to date,
     // the HTML & assets that are part of the Webpack build.

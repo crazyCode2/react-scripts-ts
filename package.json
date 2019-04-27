@@ -10,13 +10,7 @@
   "bugs": {
     "url": "https://github.com/wmonk/create-react-app/issues"
   },
-  "files": [
-    "bin",
-    "config",
-    "scripts",
-    "template",
-    "utils"
-  ],
+  "files": ["bin", "config", "scripts", "template", "utils"],
   "bin": {
     "react-scripts-ts": "./bin/react-scripts-ts.js"
   },
@@ -45,10 +39,13 @@
     "react-dev-utils": "^5.0.2",
     "resolve": "1.6.0",
     "style-loader": "0.19.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "ts-jest": "22.0.1",
     "ts-loader": "^2.3.7",
     "tsconfig-paths-webpack-plugin": "^2.0.0",
+    "ts-import-plugin": "^1.5.5",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
     "tslint-react": "^3.2.0",

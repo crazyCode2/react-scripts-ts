@@ -53,7 +53,7 @@ const cssFilename = 'static/css/[name].[contenthash:8].css';
 // To have this structure working with relative paths, we have to use custom options.
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
   ? // Making sure that the publicPath goes back to to build folder.
-    { publicPath: Array(cssFilename.split('/').length).join('../') }
+  { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
 // This is the production configuration.
@@ -67,9 +67,9 @@ module.exports = {
   devtool: shouldUseSourceMap ? 'source-map' : false,
   // In production, we only want to load the polyfills and the app code.
   entry: {
-    polyfills: require.resolve('./polyfills'),
+    // polyfills: require.resolve('./polyfills'),
     main: paths.appIndexJs,
-    vendor: ['react', 'react-dom', 'antd']
+    vendor: ['@babel/polyfill', 'react', 'react-dom', 'antd']
   },
   output: {
     // The build folder.
